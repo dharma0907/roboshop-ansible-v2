@@ -1,0 +1,11 @@
+ansible_user: ec2-user
+ansible_password: DevOps321
+MONGO_HOST: mongo.dcinema.online
+Redis_Host: redis.dcinema.online
+Cart_Host: cart.dcinema.online
+User_Host: user.dcinema.online
+Ship_Host: shipping.dcinema.online
+Mysql_Host: mysql.dcinema.online
+Rabbitmq_Host: rabbitmq.dcinema.online
+Catalogue_host: catalogue.dcinema.online
+Payment_Host: payment.dcinema.online

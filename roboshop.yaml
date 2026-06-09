@@ -1,0 +1,6 @@
+- name: configure "{{ component }}" server
+  hosts: "{{ component  }}"
+  become: true
+  roles:
+  - mongo
+# ansible-playbook roboshop.yaml -r "component=mongo"
