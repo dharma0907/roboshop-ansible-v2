@@ -1,54 +1,22 @@
-  - name: enable node:20
-    command: dnf module enable nodejs:20 -y
-  
-  - name: Install Node
-    package:
-     name: nodejs
-     state: present
-  
-  - name: create roboshop system user
-    user:
-      name: roboshop
-      system: true
-      home: /app
-      shell: /bin/nologin
-      comment: "roboshop system user"
+# here we have many common tasks whic are executed for other services also , so we can put them under common tasks/*.yml
+# use import_task to get all common tasks executed
+
   # need to create a directory and download code
   # if directory present then delete and create againg and download
-  - name: Delete a directory
-    ansible.builtin.file:
-      path:  /app 
-      state: absent
+  - name: application setup
+    import_role:
+     name: common
+     tasks_from: app-setup
 
-  - name: delete catalogue.zip in tmp
-    ansible.builtin.file:
-      path: /tmp/catalogue.zip
-      state: absent
+  - name: nodejs setup
+    import_role:
+      name: common
+      tasks_from: nodejs
 
-  - name: Create a directory if doen't exists
-    ansible.builtin.file:
-      path: /app
-      state: directory
-  
-  - name: Download catalogue
-    ansible.builtin.get_url:
-     url: https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
-     dest: /tmp/catalogue.zip
-
-  - name: unzip catalogue
-    ansible.builtin.unarchive:
-     src:  /tmp/catalogue.zip
-     dest: /app
-     remote_src: true
-  
-  - name: Install dependencies
-    community.general.npm:
-      path: /app
-
-  - name: Copy file to /etc/file.conf
-    ansible.builtin.template:
-      src: catalogue.service.j2
-      dest: /etc/systemd/system/catalogue.service
+  - name: systemd setup
+    import_role:
+      name: common
+      tasks_from: systemd-setup
 
   - name: Copy mongo repo
     ansible.builtin.copy:
@@ -79,16 +47,7 @@
     tags:
     - mongo
 
-  - name: Restart service cron on centos, in all cases, also issue daemon-reload to pick up config changes
-    ansible.builtin.systemd_service:
-     name: catalogue
-     #state: restarted
-     daemon_reload: true
-    #when: unit_file.change
-
-  - name: start and enable catalongue
-    service:
-      name: catalogue
-      state: restarted
-      enabled: true
- 
+  - name: start and enable
+    import_role:
+      name: common
+      tasks_from: restart 

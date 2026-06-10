@@ -2,5 +2,5 @@
   hosts: "{{ component  }}"
   become: true
   roles:
-  - mongo
+  - '{{ component  }}'
 # ansible-playbook roboshop.yaml -r "component=mongo"
